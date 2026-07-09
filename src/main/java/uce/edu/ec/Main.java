@@ -1,13 +1,20 @@
 package uce.edu.ec;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import jakarta.inject.Inject;
+import uce.edu.ec.aplication.service.AuditoriaService;
+import uce.edu.ec.aplication.service.EstudianteService;
 import uce.edu.ec.aplication.service.FacturaService;
-import uce.edu.ec.domain.model.Factura;
+import uce.edu.ec.aplication.service.FacturaServiceCompletadoFuture;
+import uce.edu.ec.aplication.service.FacturaServiceParalelo;
+import uce.edu.ec.aplication.service.MatriculaService;
+import uce.edu.ec.aplication.service.ReporteService;
+import uce.edu.ec.domain.model.Reporte;
 
 @QuarkusMain
 public class Main {
@@ -17,26 +24,45 @@ public class Main {
     }
  
     public static class App implements QuarkusApplication {
- 
+
         @Inject
         private FacturaService fs;
- 
+
+        @Inject
+        private MatriculaService ms;
+
+        @Inject
+        private FacturaServiceParalelo fsp;
+        
+        @Inject
+        private FacturaServiceCompletadoFuture fsc;
+
+        @Inject
+        private EstudianteService es;
+
+        @Inject
+        private AuditoriaService as;
+
+        @Inject
+        private ReporteService rs;
+
         @Override
         public int run(String... args) throws Exception {
- 
-            System.out.println("Conexión a la base de datos POSTGRES!");
+        
+        System.out.println("Conectado a la BASE DE DATOS");
+        
+        List<Reporte> lista = new ArrayList<>();
 
-            Factura f1 = new Factura();
-            f1.setFecha(LocalDate.of(2016, 10, 1));
-            f1.setNumero("0001-0004");
-            f1.setRuc("1727555789");
- 
-           // fs.guardar(f1);
+        for (int i = 0; i < 30; i++) {
+            Reporte r1 = new Reporte();
+            r1.setDescripcion("nuevo reporte");
+            r1.setTitulo("Texto de prueba" + i);
+            lista.add(r1);
+        }
 
- 
-            Factura f = fs.buscarPorId(1);
-            System.out.println(f);
- 
+        this.rs.guardarListaReporte(lista);
+        
+
             return 0;
         }
     }
